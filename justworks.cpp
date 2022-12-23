@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -21,6 +23,30 @@ Output Format:
 CustomerID, MM/YYYY, Min Balance, Max Balance, Ending Balance
 */
 
+// Generate insight from a list of banking transactions occurring in customer's accounts.
+class Customer
+{
+public:
+    // Setting the variables for balances.
+    // Starting balance is 0.
+    string name;
+    double min = 0;
+    double max;
+    double endBalance;
+
+    Customer(string name)
+    {
+        this->name = name;
+    }
+};
+
 int main()
 {
+    string customerName;
+    cout << "Please enter Customer's Name:" << endl;
+    cin >> customerName;
+    // Creating an object
+    Customer customer(customerName);
+
+    cout << "Name you have entered is: " << customer.name << endl;
 }
