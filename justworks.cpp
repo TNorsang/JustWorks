@@ -24,6 +24,7 @@ CustomerID, MM/YYYY, Min Balance, Max Balance, Ending Balance
 */
 
 // Generate insight from a list of banking transactions occurring in customer's accounts.
+
 class Customer
 {
 public:
@@ -42,11 +43,17 @@ public:
 
 int main()
 {
-    string customerName;
-    cout << "Please enter Customer's Name:" << endl;
-    cin >> customerName;
-    // Creating an object
-    Customer customer(customerName);
+    string fileName;
+    cout << "What is the file name of the Customer?" << endl;
+    cin >> fileName;
 
-    cout << "Name you have entered is: " << customer.name << endl;
+    ifstream csvFile(fileName);
+
+    if (csvFile.fail())
+    {
+        cerr << "Error opening File" << endl;
+        return 1;
+    }
+
+    string line;
 }
