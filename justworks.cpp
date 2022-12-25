@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -51,9 +53,16 @@ int main()
 
     if (csvFile.fail())
     {
-        cerr << "Error opening File" << endl;
-        return 1;
+        cerr << "Error opening File. File does not Exist!" << endl;
     }
 
     string line;
+    while (getline(csvFile, line))
+    {
+        cout << line << endl;
+    }
+
+    csvFile.close();
+
+    return 0;
 }
