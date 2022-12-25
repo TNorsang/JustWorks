@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -27,20 +28,25 @@ CustomerID, MM/YYYY, Min Balance, Max Balance, Ending Balance
 
 // Generate insight from a list of banking transactions occurring in customer's accounts.
 
+// Creating a class for transaction that holds the three datas.
+class Transaction
+{
+public:
+    int customerID;
+    string date;
+    int Amount;
+};
+
 class Customer
 {
 public:
     // Setting the variables for balances.
     // Starting balance is 0.
-    string name;
-    double min = 0;
-    double max;
-    double endBalance;
-
-    Customer(string name)
-    {
-        this->name = name;
-    }
+    int customerID;
+    // Creating min,max,end balances with map
+    map<string, int> minBalance;
+    map<string, int> maxBalance;
+    map<string, int> endBalance;
 };
 
 int main()
