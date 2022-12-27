@@ -52,7 +52,7 @@ public:
 int main()
 {
     string fileName;
-    cout << "What is the file name of the Customer?" << endl;
+    cout << "What is the file name of the Customer? Make sure to clarify the path!" << endl;
     cin >> fileName;
 
     ifstream csvFile(fileName);
@@ -63,8 +63,14 @@ int main()
     }
 
     string line;
-    while (getline(csvFile, line))
+    // Clearing out the first line, the Header.
+    getline(csvFile, line);
+
+    line = "";
+
+    while (csvFile.good())
     {
+        getline(csvFile, line);
         cout << line << endl;
     }
 
