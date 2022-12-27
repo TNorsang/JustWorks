@@ -29,6 +29,7 @@ CustomerID, MM/YYYY, Min Balance, Max Balance, Ending Balance
 // Generate insight from a list of banking transactions occurring in customer's accounts.
 
 // Creating a class for transaction that holds the three datas.
+
 class Transaction
 {
 public:
