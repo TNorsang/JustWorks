@@ -33,9 +33,17 @@ CustomerID, MM/YYYY, Min Balance, Max Balance, Ending Balance
 class Transaction
 {
 public:
-    int customerID;
+    string customerID;
     string date;
-    int Amount;
+    float Amount;
+
+    // Constructor for Transaction and initilizing the values to class members.
+    Transaction(string customerID, string date, float Amount)
+    {
+        this->customerID = customerID;
+        this->date = date;
+        this->Amount = Amount;
+    }
 };
 
 class Customer
@@ -52,6 +60,8 @@ public:
 
 int main()
 {
+
+    map<string, vector<Transaction>> transactions;
     string fileName;
     cout << "What is the file name of the Customer? Make sure to clarify the path!" << endl;
     cin >> fileName;
@@ -64,18 +74,42 @@ int main()
     }
 
     string line;
+
     // Clearing out the first line, the Header.
     getline(csvFile, line);
 
     line = "";
 
-    while (csvFile.good())
+    while (getline(csvFile, line))
     {
-        getline(csvFile, line);
-        cout << line << endl;
+        stringstream data(line);
+        string value;
+
+        // Getting the first value which is the customerID
+        getline(data, value, ',');
+        // String to integer
+        string customerID = value;
+
+        // Second value which is the date
+        getline(data, value, ',');
+        string date = value;
+
+        // Third value which is the amount
+        getline(data, value, ',');
+        // String to Float
+        float amount = stof(value);
+
+        // Now adding the parsed values to the map
+
+        transactions[customerID].push_back(Transaction(customerID, date, amount));
     }
 
     csvFile.close();
+
+    for (auto it = transactions.begin(); it != transactions.end(); ++it)
+    {
+        cout << it->first << endl;
+    }
 
     return 0;
 }
