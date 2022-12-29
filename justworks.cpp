@@ -26,13 +26,11 @@ Output Format:
 CustomerID, MM/YYYY, Min Balance, Max Balance, Ending Balance
 */
 
-// Generate insight from a list of banking transactions occurring in customer's accounts.
-
-// Creating a class for transaction that holds the three datas.
-
+// Transaction Class to use in Map.
 class Transaction
 {
 public:
+    // three variables to use for constructor
     string customerID;
     string date;
     float Amount;
@@ -46,21 +44,9 @@ public:
     }
 };
 
-class Customer
-{
-public:
-    // Setting the variables for balances.
-    // Starting balance is 0.
-    int customerID;
-    // Creating min,max,end balances with map
-    map<string, int> minBalance;
-    map<string, int> maxBalance;
-    map<string, int> endBalance;
-};
-
 int main()
 {
-
+    // Map to store the datas. customerID as the Key and Transaction as Value.
     map<string, vector<Transaction>> transactions;
     string fileName;
     cout << "What is the file name of the Customer? Make sure to clarify the path!" << endl;
@@ -73,11 +59,11 @@ int main()
         cerr << "Error opening File. File does not Exist!" << endl;
     }
 
+    // Storing the line in var line.
     string line;
 
     // Clearing out the first line, the Header.
     getline(csvFile, line);
-
     line = "";
 
     while (getline(csvFile, line))
@@ -100,16 +86,22 @@ int main()
         float amount = stof(value);
 
         // Now adding the parsed values to the map
-
         transactions[customerID].push_back(Transaction(customerID, date, amount));
     }
 
-    csvFile.close();
-
-    for (auto it = transactions.begin(); it != transactions.end(); ++it)
+    for (const auto &pair : transactions)
     {
-        cout << it->first << endl;
+        string customerID = pair.first;
+        const vector<Transaction> &values = pair.second;
+        cout << "-------- "
+             << "Customer : " << customerID << " --------" << endl;
+        for (const Transaction &value : values)
+        {
+            cout << "(Date: " << value.date << ", Amount: $" << value.Amount << ") " << endl;
+        }
+        cout << endl;
     }
+    csvFile.close();
 
     return 0;
 }
