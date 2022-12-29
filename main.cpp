@@ -26,19 +26,26 @@ struct Customer
 
 int main()
 {
-    // Open the CSV file
-    ifstream dataFile("customerData.csv");
-    if (!dataFile.is_open())
+    // storing the file name
+    string fileName;
+    // asking what the file name is from user.
+    cout << "What is the file name of the Customer? Make sure to clarify the path!" << endl;
+    // Storing the name.
+    cin >> fileName;
+    // Openining the file.
+    ifstream csvFile(fileName);
+
+    // If any error occurs with opening the file, it'll print this out.
+    if (csvFile.fail())
     {
-        cout << "Unable to open file" << endl;
-        return 1;
+        cerr << "Error opening File. File does not Exist!" << endl;
     }
 
     // Read the file line by line and store transactions in a vector
     // All the datas inside the vector are objects. so {Transaction 1,}
     vector<Transaction> transactions;
     string line;
-    while (getline(dataFile, line))
+    while (getline(csvFile, line))
     {
         // Split the line by the comma delimiter
         stringstream lineStream(line);
@@ -67,7 +74,7 @@ int main()
 
         transactions.push_back(t);
     }
-    dataFile.close();
+    csvFile.close();
 
     // Sort the transactions by date
     sort(transactions.begin(), transactions.end(), [](Transaction a, Transaction b)
