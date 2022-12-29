@@ -33,14 +33,14 @@ public:
     // three variables to use for constructor
     string customerID;
     string date;
-    float Amount;
+    float amount;
 
     // Constructor for Transaction and initilizing the values to class members.
-    Transaction(string customerID, string date, float Amount)
+    Transaction(string customerID, string date, float amount)
     {
         this->customerID = customerID;
         this->date = date;
-        this->Amount = Amount;
+        this->amount = amount;
     }
 };
 
@@ -48,12 +48,18 @@ int main()
 {
     // Map to store the datas. customerID as the Key and Transaction as Value.
     map<string, vector<Transaction>> transactions;
+
+    // storing the file name
     string fileName;
+    // asking what the file name is from user.
     cout << "What is the file name of the Customer? Make sure to clarify the path!" << endl;
+    // Storing the name.
     cin >> fileName;
 
+    // Openining the file.
     ifstream csvFile(fileName);
 
+    // If any error occurs with opening the file, it'll print this out.
     if (csvFile.fail())
     {
         cerr << "Error opening File. File does not Exist!" << endl;
@@ -66,8 +72,10 @@ int main()
     getline(csvFile, line);
     line = "";
 
+    // While loop to store all the datas and store it using stringstream.
     while (getline(csvFile, line))
     {
+        // Initializing stringstream from the line.
         stringstream data(line);
         string value;
 
@@ -85,23 +93,77 @@ int main()
         // String to Float
         float amount = stof(value);
 
-        // Now adding the parsed values to the map
+        // Now adding the parsed values to the map. Using the key as customerID.
         transactions[customerID].push_back(Transaction(customerID, date, amount));
     }
 
-    for (const auto &pair : transactions)
+    // Iterate over the transactions map
+    for (map<string, vector<Transaction>>::iterator it = transactions.begin(); it != transactions.end(); it++)
     {
-        string customerID = pair.first;
-        const vector<Transaction> &values = pair.second;
-        cout << "-------- "
-             << "Customer : " << customerID << " --------" << endl;
-        for (const Transaction &value : values)
-        {
-            cout << "(Date: " << value.date << ", Amount: $" << value.Amount << ") " << endl;
-        }
-        cout << endl;
-    }
-    csvFile.close();
+        // Get the customer ID and customer transactions
+        string customerID = it->first;
+        vector<Transaction> customerTransactions = it->second;
 
-    return 0;
+        map<string, float> balances;
+
+        // Iterate over the transactions and apply them to the balances map
+        for (vector<Transaction>::iterator it2 = customerTransactions.begin(); it2 != customerTransactions.end(); it2++)
+        {
+            Transaction transaction = *it2;
+            string monthYear = transaction.date.substr(0, 7); // MM/YYYY
+            balances[monthYear] += transaction.amount;
+        }
+
+        // Iterate over the balances map and output the minimum, maximum, and ending balances
+        for (map<string, float>::iterator it3 = balances.begin(); it3 != balances.end(); it3++)
+        {
+            string monthYear = it3->first;
+            float balance = it3->second;
+            cout << "Customer: " << customerID << ": " << monthYear << ", ";
+
+            // Calculate the minimum balance
+            float minBalance = balance;
+            for (map<string, float>::iterator it4 = balances.begin(); it4 != balances.end(); it4++)
+            {
+                float b = it4->second;
+                if (b < minBalance)
+                {
+                    minBalance = b;
+                }
+            }
+            cout << "Minimum Balance is " << minBalance << ", ";
+
+            // Calculate the maximum balance
+            float maxBalance = balance;
+            for (map<string, float>::iterator it5 = balances.begin(); it5 != balances.end(); it5++)
+            {
+                float b = it5->second;
+                if (b > maxBalance)
+                {
+                    maxBalance = b;
+                }
+            }
+            cout << "Maximum Balance is " << maxBalance << ", " << endl;
+            cout << "End Balance is " << balance << endl;
+        }
+
+        // // Going through the key and values in
+        // for (const auto &pair : transactions)
+        // {
+        //     // Storing the key in customerID
+        //     string customerID = pair.first;
+        //     // Storing the multiple values inside map as
+        //     const vector<Transaction> &values = pair.second;
+        //     cout << "-------- "
+        //          << "Customer : " << customerID << " --------" << endl;
+        //     for (const Transaction &value : values)
+        //     {
+        //         cout << "(Date: " << value.date << ", Amount: $" << value.amount << ") " << endl;
+        //     }
+        //     cout << endl;
+        // }
+        csvFile.close();
+
+        return 0;
+    }
 }
