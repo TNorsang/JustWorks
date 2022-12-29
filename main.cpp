@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <sstream>
 #include <algorithm>
 #include <vector>
@@ -35,6 +35,7 @@ int main()
     }
 
     // Read the file line by line and store transactions in a vector
+    // All the datas inside the vector are objects. so {Transaction 1,}
     vector<Transaction> transactions;
     string line;
     while (getline(dataFile, line))
@@ -51,15 +52,19 @@ int main()
         Transaction t;
         t.customerID = cells[0];
         t.date = cells[1];
+
+        // This sometime throws an error of "Invalid_argument". So I put a try catch phrase for that reason.
+        t.amount = stoi(cells[2]);
         try
         {
             t.amount = stoi(cells[2]);
         }
         catch (invalid_argument &e)
         {
-            cout << "Invalid amount: " << cells[2] << endl;
+            cout << "Error Caught. Invalid Amount: " << cells[2] << endl;
             continue;
         }
+
         transactions.push_back(t);
     }
     dataFile.close();
@@ -69,11 +74,12 @@ int main()
          { return a.date < b.date; });
 
     // Create a map to store customer data
-    unordered_map<string, Customer> customers;
+    map<string, Customer> customers;
 
     // Iterate through the transactions and calculate the min, max, and ending balance for each customer
     for (Transaction t : transactions)
     {
+        // This captures the first two characters of the date and last four characters.
         string monthYear = t.date.substr(0, 2) + '/' + t.date.substr(6, 4);
         if (customers.count(t.customerID) == 0)
         {
@@ -88,22 +94,20 @@ int main()
         }
         else
         {
+            // [10,10,5,-50,-50,30]
+            // currentMin = 10
             // Update the existing customer data
             Customer c = customers[t.customerID];
-            if (c.monthYear != monthYear)
-            {
-                // If the month has changed, reset the min and max balance
-                c.monthYear = monthYear;
-                c.minBalance = t.amount;
-                c.maxBalance = t.amount;
-            }
-            else
-            {
-                // Update the min and max balance
-                c.minBalance = min(c.minBalance, t.amount);
-                c.maxBalance = max(c.maxBalance, t.amount);
-            }
             c.endingBalance += t.amount;
+
+            if (c.endingBalance < c.minBalance)
+            {
+                c.minBalance = c.endingBalance;
+            }
+            if (c.endingBalance > c.maxBalance)
+            {
+                c.maxBalance = c.endingBalance;
+            }
             customers[t.customerID] = c;
         }
     }
