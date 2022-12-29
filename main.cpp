@@ -1,23 +1,29 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <map>
-#include <sstream>
-#include <algorithm>
-#include <vector>
+// Including all the necessary modules
+#include <iostream> // cout/cin etc
+#include <fstream>  // input/output file
+#include <string>   // string module
+#include <map>      // map module
+#include <sstream>  // store/parsing strings
+#include <vector>   // vector module
 
-using namespace std;
+using namespace std; // taking out std::
 
+/*
+Creating a "Struct" rather than a "Class"
+Struct makes everything public by default and Class the opposite
+*/
+// Transaction for each customer
 struct Transaction
 {
-    string customerID;
+    string customerID; // The key
     string date;
     int amount;
 };
-
+// Holding different customers
 struct Customer
 {
-    string customerID;
+    // The outputs
+    string customerID; // The key
     string monthYear;
     int minBalance;
     int maxBalance;
