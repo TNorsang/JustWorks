@@ -32,10 +32,11 @@ struct Customer
 
 int main()
 {
+    cout << "\nWelcome to JustWorks!\n\n";
     // storing the file name
     string fileName;
     // asking what the file name is from user.
-    cout << "What is the file name of the Customer? Make sure to clarify the path!" << endl;
+    cout << "Please enter the CSV file name you wish to gather data from. Make sure to clarify the path!" << endl;
     // Storing the name.
     cin >> fileName;
     // Openining the file.
@@ -84,51 +85,58 @@ int main()
 
     csvFile.close(); // closing the file
 
-    // Create a map to store customer data
-    map<string, Customer> customers;
+    map<string, Customer> customers; // Map of string as key and Customer Object as the values
 
-    // Iterate through the transactions and calculate the min, max, and ending balance for each customer
-    for (Transaction t : transactions)
+    // Iterate through transaction vector that holds cusid, date, amout to find out min,max,end etc.
+    for (Transaction &t : transactions)
     {
-        // This captures the first two characters of the date and last four characters.
+        // This captures the first two characters of the date and last four characters using substr.
         string monthYear = t.date.substr(0, 2) + '/' + t.date.substr(6, 4);
+
+        // Create and initiliaze the values only if the map doesn't have the customerID
         if (customers.count(t.customerID) == 0)
         {
-            // Create a new customer if they don't exist in the map
+            // Create a new customer if they don't exist in the map based on customerID
             Customer c;
-            c.customerID = t.customerID;
-            c.monthYear = monthYear;
-            c.minBalance = t.amount;
-            c.maxBalance = t.amount;
-            c.endingBalance = t.amount;
-            customers[t.customerID] = c;
+            c.customerID = t.customerID; // assigning the t.customerID to new customer object
+            c.monthYear = monthYear;     // same here
+            c.minBalance = t.amount;     // min balance starts with the first amount
+            c.maxBalance = t.amount;     // same with max
+            c.endingBalance = t.amount;  // same with end balance
+            customers[t.customerID] = c; // setting the customers key as the id for this transaction
         }
         else
         {
             // [10,10,5,-50,-50,30]
             // currentMin = 10
             // Update the existing customer data
-            Customer c = customers[t.customerID];
-            c.endingBalance += t.amount;
+            Customer c = customers[t.customerID]; // reinitializing the key to customerID
 
-            if (c.endingBalance < c.minBalance)
+            c.endingBalance += t.amount; // Endingbalance is incremented with the amount value
+
+            // The logic behind the min and max balance
+            if (c.endingBalance < c.minBalance) // if ending balance is less than min balance
             {
-                c.minBalance = c.endingBalance;
+                c.minBalance = c.endingBalance; // then that is the min balance
             }
-            if (c.endingBalance > c.maxBalance)
+            if (c.endingBalance > c.maxBalance) // if ending balance is greater than max balance
             {
-                c.maxBalance = c.endingBalance;
+                c.maxBalance = c.endingBalance; // then that is the max balance
             }
-            customers[t.customerID] = c;
+            customers[t.customerID] = c; // that object c is stored inside the cusID
         }
     }
 
-    // Print the results
+    // Print the results in the map
     for (auto pair : customers)
     {
-        Customer c = pair.second;
-        cout << c.customerID << ", " << c.monthYear << ", " << c.minBalance << ", " << c.maxBalance << ", " << c.endingBalance << endl;
+        Customer c = pair.second; // pair.second is the value of the map and it is stored inside customer c
+        cout << "-------------------------------- "
+             << "Customer: " << c.customerID
+             << " --------------------------------\n"
+             << "Date: " << c.monthYear << " | Min Balance: $" << c.minBalance << "| Max Balance: $" << c.maxBalance << " | Ending Balance: $" << c.endingBalance << "\n"
+             << endl;
     }
 
-    return 0;
+    return 0; // return false if code fails
 }
