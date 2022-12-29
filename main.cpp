@@ -47,44 +47,42 @@ int main()
         cerr << "Error opening File. File does not Exist!" << endl;
     }
 
-    // Read the file line by line and store transactions in a vector
-    // All the datas inside the vector are objects. so {Transaction 1,}
+    // Vector of objects called transaction which will store the ID, Date, Amount
     vector<Transaction> transactions;
-    string line;
-    while (getline(csvFile, line))
+    string line; // storing the line
+
+    // Read the file line by line and store transactions in a vector
+    while (getline(csvFile, line)) // reads till the end of line is reached
     {
+        stringstream lineStream(line); // reads the values in line as if it is an input
+        string cell;                   // Store each values till each comma
+        vector<string> cells;          // Storing all the values in cell as a vector of strings
         // Split the line by the comma delimiter
-        stringstream lineStream(line);
-        string cell;
-        vector<string> cells;
         while (getline(lineStream, cell, ','))
         {
-            cells.push_back(cell);
+            cells.push_back(cell); // pushing the string in vector
         }
-        // Add the transaction to the vector
-        Transaction t;
-        t.customerID = cells[0];
-        t.date = cells[1];
+        // Adding all values in vector to the object t from Transaction Struct
+        Transaction t;           // Transaction object
+        t.customerID = cells[0]; // storing customerID from cells[0]
+        t.date = cells[1];       // storing date from cells[1]
 
-        // This sometime throws an error of "Invalid_argument". So I put a try catch phrase for that reason.
-        t.amount = stoi(cells[2]);
+        // t.amount/stoi sometime throws an error of "Invalid_argument".
+        // So I put a try catch phrase for that reason.
         try
         {
-            t.amount = stoi(cells[2]);
+            t.amount = stoi(cells[2]); // storing amount from cells[2]
         }
         catch (invalid_argument &e)
         {
             cout << "Error Caught. Invalid Amount: " << cells[2] << endl;
             continue;
         }
-
+        // The object is now pushed to the transactions vector
         transactions.push_back(t);
     }
-    csvFile.close();
 
-    // Sort the transactions by date
-    sort(transactions.begin(), transactions.end(), [](Transaction a, Transaction b)
-         { return a.date < b.date; });
+    csvFile.close(); // closing the file
 
     // Create a map to store customer data
     map<string, Customer> customers;
